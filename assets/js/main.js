@@ -1,372 +1,258 @@
-/* ==============
- ========= js documentation ==========================
+/**
+* Template Name: Arsha
+* Updated: Jan 09 2024 with Bootstrap v5.3.2
+* Template URL: https://bootstrapmade.com/arsha-free-bootstrap-html-template-corporate/
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+*/
+(function() {
+  "use strict";
 
- * theme name: Xpovio
- * version: 1.0
- * description: Creative Agency Portfolio HTML5 Template
- * author: Gramentheme
- * author-url: https://themeforest.net/user/gramentheme
+  /**
+   * Easy selector helper function
+   */
+  const select = (el, all = false) => {
+    el = el.trim()
+    if (all) {
+      return [...document.querySelectorAll(el)]
+    } else {
+      return document.querySelector(el)
+    }
+  }
 
-    ==================================================
+  /**
+   * Easy event listener function
+   */
+  const on = (type, el, listener, all = false) => {
+    let selectEl = select(el, all)
+    if (selectEl) {
+      if (all) {
+        selectEl.forEach(e => e.addEventListener(type, listener))
+      } else {
+        selectEl.addEventListener(type, listener)
+      }
+    }
+  }
 
-     01. preloader
-     -------------------------------------------------
-     02. primary navbar sticky
-     -------------------------------------------------
-     03. progress wrap sticky
-     -------------------------------------------------
-     04. data background
-     -------------------------------------------------
-     05. custom cursor
-     -------------------------------------------------
-     06. mobile menu
-     -------------------------------------------------
-     07. on window scroll navbar
-     -------------------------------------------------
-     08. on window resize navbar
-     -------------------------------------------------
-     09. offcanvas navigation
-     -------------------------------------------------
-     10. toggle class to items
-     -------------------------------------------------
-     11. offer image move with cursor
-     -------------------------------------------------
-     12. service faq
-     -------------------------------------------------
-     13. work image move with cursor
-     -------------------------------------------------
-     14. blog three image hover
-     -------------------------------------------------
-     15. faq
-     -------------------------------------------------
-     16. footer copyright year
-     -------------------------------------------------
-     17. scroll to top with progress
+  /**
+   * Easy on scroll event listener 
+   */
+  const onscroll = (el, listener) => {
+    el.addEventListener('scroll', listener)
+  }
 
-    ==================================================
-============== */
+  /**
+   * Navbar links active state on scroll
+   */
+  let navbarlinks = select('#navbar .scrollto', true)
+  const navbarlinksActive = () => {
+    let position = window.scrollY + 200
+    navbarlinks.forEach(navbarlink => {
+      if (!navbarlink.hash) return
+      let section = select(navbarlink.hash)
+      if (!section) return
+      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
+        navbarlink.classList.add('active')
+      } else {
+        navbarlink.classList.remove('active')
+      }
+    })
+  }
+  window.addEventListener('load', navbarlinksActive)
+  onscroll(document, navbarlinksActive)
 
-(function($) {
-	"use strict";
+  /**
+   * Scrolls to an element with header offset
+   */
+  const scrollto = (el) => {
+    let header = select('#header')
+    let offset = header.offsetHeight
 
-	jQuery(document).ready(function() {
+    let elementPos = select(el).offsetTop
+    window.scrollTo({
+      top: elementPos - offset,
+      behavior: 'smooth'
+    })
+  }
 
-		// 01. preloader
-		$("#preloader").fadeOut(800);
-		
-		$(window).on("load", function() {
-			// 02. primary navbar sticky
-			var initialScroll = $(window).scrollTop();
-			if (initialScroll >= 100) {
-				$(".primary-navbar").addClass("navbar-active");
-			}
+  /**
+   * Toggle .header-scrolled class to #header when page is scrolled
+   */
+  let selectHeader = select('#header')
+  if (selectHeader) {
+    const headerScrolled = () => {
+      if (window.scrollY > 100) {
+        selectHeader.classList.add('header-scrolled')
+      } else {
+        selectHeader.classList.remove('header-scrolled')
+      }
+    }
+    window.addEventListener('load', headerScrolled)
+    onscroll(document, headerScrolled)
+  }
 
-			// 03. progress wrap sticky
-			var initialScroll = $(window).scrollTop();
-			if (initialScroll >= 100) {
-				$(".progress-wrap").addClass("active-progress");
-			}
-		});
+  /**
+   * Back to top button
+   */
+  let backtotop = select('.back-to-top')
+  if (backtotop) {
+    const toggleBacktotop = () => {
+      if (window.scrollY > 100) {
+        backtotop.classList.add('active')
+      } else {
+        backtotop.classList.remove('active')
+      }
+    }
+    window.addEventListener('load', toggleBacktotop)
+    onscroll(document, toggleBacktotop)
+  }
 
-		// 04. data background
-		$("[data-background]").each(function() {
-			$(this).css(
-				"background-image",
-				"url(" + $(this).attr("data-background") + ")"
-			);
-		});
+  /**
+   * Mobile nav toggle
+   */
+  on('click', '.mobile-nav-toggle', function(e) {
+    select('#navbar').classList.toggle('navbar-mobile')
+    this.classList.toggle('bi-list')
+    this.classList.toggle('bi-x')
+  })
 
-		let device_width = window.innerWidth;
+  /**
+   * Mobile nav dropdowns activate
+   */
+  on('click', '.navbar .dropdown > a', function(e) {
+    if (select('#navbar').classList.contains('navbar-mobile')) {
+      e.preventDefault()
+      this.nextElementSibling.classList.toggle('dropdown-active')
+    }
+  }, true)
 
-		// 05. custom cursor
-		function itCursor() {
-			var myCursor = jQuery(".mouseCursor");
-			if (myCursor.length) {
-				if ($("body")) {
-					const e = document.querySelector(".cursor-inner"),
-						t = document.querySelector(".cursor-outer");
-					let n,
-						i = 0,
-						o = !1;
-					(window.onmousemove = function(s) {
-						o ||
-							(t.style.transform =
-								"translate(" + s.clientX + "px, " + s.clientY + "px)"),
-							(e.style.transform =
-								"translate(" + s.clientX + "px, " + s.clientY + "px)"),
-							(n = s.clientY),
-							(i = s.clientX);
-					}),
-					$("body").on(
-							"mouseenter",
-							"button, a, .cursor-pointer",
-							function() {
-								e.classList.add("cursor-hover"),
-									t.classList.add("cursor-hover");
-							}
-						),
-						$("body").on(
-							"mouseleave",
-							"button, a, .cursor-pointer",
-							function() {
-								($(this).is("a", "button") &&
-									$(this).closest(".cursor-pointer").length) ||
-								(e.classList.remove("cursor-hover"),
-									t.classList.remove("cursor-hover"));
-							}
-						),
-						(e.style.visibility = "visible"),
-						(t.style.visibility = "visible");
-				}
-			}
-		}
-		itCursor();
+  /**
+   * Scrool with ofset on links with a class name .scrollto
+   */
+  on('click', '.scrollto', function(e) {
+    if (select(this.hash)) {
+      e.preventDefault()
 
-		// 06. mobile menu
-		if ($(".mobile-menu").length) {
-			var mobileMenuContent = $(".cmn-nav .navbar__menu").html();
-			$(".cmn-nav .mobile-menu__list").append(mobileMenuContent);
+      let navbar = select('#navbar')
+      if (navbar.classList.contains('navbar-mobile')) {
+        navbar.classList.remove('navbar-mobile')
+        let navbarToggle = select('.mobile-nav-toggle')
+        navbarToggle.classList.toggle('bi-list')
+        navbarToggle.classList.toggle('bi-x')
+      }
+      scrollto(this.hash)
+    }
+  }, true)
 
-			var mobileMenuOptions = $(".cmn-nav .navbar__mobile-options").html();
-			$(".cmn-nav .mobile-menu__options").append(mobileMenuOptions);
+  /**
+   * Scroll with ofset on page load with hash links in the url
+   */
+  window.addEventListener('load', () => {
+    if (window.location.hash) {
+      if (select(window.location.hash)) {
+        scrollto(window.location.hash)
+      }
+    }
+  });
 
-			$(".mobile-menu .navbar__dropdown-label").on("click", function() {
-				$(this).parent().siblings().find(".navbar__sub-menu").slideUp(300);
-				$(this)
-					.parent()
-					.siblings()
-					.find(".navbar__dropdown-label")
-					.removeClass("navbar__item-active");
-				$(this).siblings(".navbar__sub-menu").slideToggle(300);
-				$(this).toggleClass("navbar__item-active");
-			});
-		}
+  /**
+   * Preloader
+   */
+  let preloader = select('#preloader');
+  if (preloader) {
+    window.addEventListener('load', () => {
+      preloader.remove()
+    });
+  }
 
-		$(".open-mobile-menu, .open-offcanvas-nav").on("click", function() {
-			$(".mobile-menu__backdrop").addClass("mobile-menu__backdrop-active");
-			$(".nav-fade").each(function(i) {
-				$(this).css("animation-delay", 0.2 * 1 * i + "s");
-			});
+  /**
+   * Initiate  glightbox 
+   */
+  const glightbox = GLightbox({
+    selector: '.glightbox'
+  });
 
-			$(".mobile-menu").addClass("show-menu");
-			$(".mobile-menu__wrapper").removeClass("nav-fade-active");
-		});
+  /**
+   * Skills animation
+   */
+  let skilsContent = select('.skills-content');
+  if (skilsContent) {
+    new Waypoint({
+      element: skilsContent,
+      offset: '80%',
+      handler: function(direction) {
+        let progress = select('.progress .progress-bar', true);
+        progress.forEach((el) => {
+          el.style.width = el.getAttribute('aria-valuenow') + '%'
+        });
+      }
+    })
+  }
 
-		$(".close-mobile-menu, .mobile-menu__backdrop").on("click", function() {
-			setTimeout(function() {
-				$(".mobile-menu").removeClass("show-menu");
-			}, 900);
-			setTimeout(function() {
-				$(".mobile-menu__backdrop").removeClass("mobile-menu__backdrop-active");
-			}, 1100);
+  /**
+   * Porfolio isotope and filter
+   */
+  window.addEventListener('load', () => {
+    let portfolioContainer = select('.portfolio-container');
+    if (portfolioContainer) {
+      let portfolioIsotope = new Isotope(portfolioContainer, {
+        itemSelector: '.portfolio-item'
+      });
 
-			$(".mobile-menu__wrapper").addClass("nav-fade-active");
-		});
+      let portfolioFilters = select('#portfolio-flters li', true);
 
-		// 07. close video popup
-		$(".close-v").on("click", function() {
-			$(".vid-m").fadeOut(300);
-		});
+      on('click', '#portfolio-flters li', function(e) {
+        e.preventDefault();
+        portfolioFilters.forEach(function(el) {
+          el.classList.remove('filter-active');
+        });
+        this.classList.add('filter-active');
 
-		// 08. on window scroll navbar
-		$(window).on("scroll", function() {
-			var scroll = $(window).scrollTop();
-			if (scroll < 100) {
-				$(".primary-navbar").removeClass("navbar-active");
-			} else {
-				$(".primary-navbar").addClass("navbar-active");
-			}
-		});
+        portfolioIsotope.arrange({
+          filter: this.getAttribute('data-filter')
+        });
+        portfolioIsotope.on('arrangeComplete', function() {
+          AOS.refresh()
+        });
+      }, true);
+    }
 
-		// 09. on window resize navbar
-		$(window).on("resize", function() {
-			$("body").removeClass("body-active");
-			$(".mobile-menu").removeClass("show-menu");
-			$(".mobile-menu__backdrop").removeClass("mobile-menu__backdrop-active");
-			$(".mobile-menu__wrapper").addClass("nav-fade-active");
-		});
+  });
 
-		// 10. offcanvas navigation
-		if ($(".offcanvas-nav").length) {
-			$(".offcanvas-menu .navbar__dropdown-label").on("click", function() {
-				$(this).parent().siblings().find(".navbar__sub-menu").slideUp(300);
-				$(this)
-					.parent()
-					.siblings()
-					.find(".navbar__dropdown-label")
-					.removeClass("navbar__item-active");
-				$(this).siblings(".navbar__sub-menu").slideToggle(300);
-				$(this).toggleClass("navbar__item-active");
-			});
-		}
+  /**
+   * Initiate portfolio lightbox 
+   */
+  const portfolioLightbox = GLightbox({
+    selector: '.portfolio-lightbox'
+  });
 
-		$(".open-offcanvas-nav").on("click", function() {
-			$(".nav-fade").each(function(i) {
-				$(this).css("animation-delay", 1 + 0.2 * 1 * i + "s");
-			});
+  /**
+   * Portfolio details slider
+   */
+  new Swiper('.portfolio-details-slider', {
+    speed: 400,
+    loop: true,
+    autoplay: {
+      delay: 5000,
+      disableOnInteraction: false
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      type: 'bullets',
+      clickable: true
+    }
+  });
 
-			$(".offcanvas-menu").addClass("show-offcanvas-menu");
-			$(".offcanvas-menu__wrapper").removeClass("nav-fade-active");
-		});
+  /**
+   * Animation on scroll
+   */
+  window.addEventListener('load', () => {
+    AOS.init({
+      duration: 1000,
+      easing: "ease-in-out",
+      once: true,
+      mirror: false
+    });
+  });
 
-		$(".close-offcanvas-menu, .offcanvas-menu__backdrop").on(
-			"click",
-			function() {
-				setTimeout(function() {
-					$(".offcanvas-menu").removeClass("show-offcanvas-menu");
-				}, 900);
-				$(".offcanvas-menu__wrapper").addClass("nav-fade-active");
-			}
-		);
-
-		// 11. toggle class to items
-		$(".portfolio__single").on("mouseover", function() {
-			$(".portfolio__single").removeClass("portfolio__single-active");
-			$(this).addClass("portfolio__single-active");
-		});
-
-		$(".work-steps__single").on("mouseover", function() {
-			$(".work-steps__single").removeClass("work-steps__single-active");
-			$(this).addClass("work-steps__single-active");
-		});
-
-		// 12. offer image move with cursor
-		if (device_width > 576) {
-			const blogImgItem = document.querySelectorAll(".offer__cta-single");
-
-			function followImageCursor(event, blogImgItem) {
-				const contentBox = blogImgItem.getBoundingClientRect();
-				const dx = event.clientX - contentBox.x;
-				const dy = event.clientY - contentBox.y;
-				blogImgItem.children[2].style.transform = `translate(${dx}px, ${dy}px) rotate(15deg)`;
-			}
-			blogImgItem.forEach((item, i) => {
-				item.addEventListener("mousemove", (event) => {
-					setInterval(followImageCursor(event, item), 1000);
-				});
-			});
-		}
-
-		// 13. service faq
-		$(".service-f-single:first").addClass("service-f-single-active");
-		$(".service-f-single:first .p-single").show();
-		$(".toggle-service-f").on("click", function() {
-			var parent = $(this).parent();
-			parent.find(".p-single").slideToggle(600);
-			parent.toggleClass("service-f-single-active");
-			parent.siblings().removeClass("service-f-single-active");
-			parent.siblings().find(".p-single").slideUp(600);
-		});
-
-		// 14. work image move with cursor
-		if (device_width > 576) {
-			const workImgItem = document.querySelectorAll(".work-steps__single");
-
-			function followImageCursor(event, workImgItem) {
-				const contentBox = workImgItem.getBoundingClientRect();
-				const dx = event.clientX - contentBox.x;
-				const dy = event.clientY - contentBox.y;
-				workImgItem.children[2].style.transform = `translate(${dx}px`;
-			}
-			workImgItem.forEach((item, i) => {
-				item.addEventListener("mousemove", (event) => {
-					setInterval(followImageCursor(event, item), 1000);
-				});
-			});
-		}
-
-		// 15. blog three image hover
-		$(".blog-three__thumb .blog-single-img:not(:first-child)").hide();
-
-		$(".blog-three__single").on("mouseenter", function() {
-			if ($(this).hasClass("active")) {
-				return;
-			}
-
-			var index = $(this).index();
-			gsap.to(".blog-three__thumb .blog-single-img", {
-				opacity: 0,
-				scale: 0,
-				duration: 0.4,
-				onComplete: function() {
-					$(".blog-three__thumb .blog-single-img").hide();
-					$(".blog-three__thumb .blog-single-img").eq(index).show();
-					gsap.fromTo(
-						".blog-three__thumb .blog-single-img", {
-							opacity: 0,
-							scale: 0,
-						}, {
-							opacity: 1,
-							scale: 1,
-							duration: 0.4,
-						}
-					);
-				},
-			});
-
-			$(".blog-three__single").removeClass("active");
-			$(this).addClass("active");
-		});
-
-		$(".blog-three__single").on("mouseleave", function() {
-			gsap.to(".blog-three__thumb .blog-single-img", {
-				opacity: 1,
-				scale: 1,
-				duration: 0.4,
-			});
-		});
-
-		// 16. faq
-		$(".accordion-button:not(.collapsed)")
-			.parents(".accordion-item")
-			.addClass("faq-one-active");
-		$(".accordion-button").on("click", function() {
-			$(".accordion-item").removeClass("faq-one-active");
-			$(".accordion-button:not(.collapsed)")
-				.parents(".accordion-item")
-				.addClass("faq-one-active");
-		});
-
-		// 17. footer copyright year
-		$("#copyYear").text(new Date().getFullYear());
-
-		// 18. scroll to top with progress
-		if ($(".progress-wrap").length > 0) {
-			var progressPath = document.querySelector(".progress-wrap path");
-			var pathLength = progressPath.getTotalLength();
-			progressPath.style.transition = progressPath.style.WebkitTransition =
-				"none";
-			progressPath.style.strokeDasharray = pathLength + " " + pathLength;
-			progressPath.style.strokeDashoffset = pathLength;
-			progressPath.getBoundingClientRect();
-			progressPath.style.transition = progressPath.style.WebkitTransition =
-				"stroke-dashoffset 10ms linear";
-			var updateProgress = function() {
-				var scroll = $(window).scrollTop();
-				var height = $(document).height() - $(window).height();
-				var progress = pathLength - (scroll * pathLength) / height;
-				progressPath.style.strokeDashoffset = progress;
-			};
-			updateProgress();
-			$(window).scroll(updateProgress);
-			var offset = 50;
-			var duration = 1000;
-			$(window).on("scroll", function() {
-				if ($(this).scrollTop() > offset) {
-					$(".progress-wrap").addClass("active-progress");
-				} else {
-					$(".progress-wrap").removeClass("active-progress");
-				}
-			});
-			$(".progress-wrap").on("click", function(event) {
-				event.preventDefault();
-				$("html, body").animate({
-						scrollTop: 0,
-					},
-					duration
-				);
-				return false;
-			});
-		}
-	});
-})(jQuery);
+})()
